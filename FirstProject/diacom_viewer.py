@@ -6,6 +6,75 @@ Created on Sun Dec 24 17:05:33 2023
 @author: milan
 """
 
+
+import os
+import tkinter as tk
+from tkinter import filedialog
+import pydicom
+from PIL import Image, ImageTk
+
+class DICOMViewerApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("DICOM Viewer")
+
+        # Variables
+        self.dicom_file_path = tk.StringVar()
+        self.image_label = tk.Label(root)
+
+        # Browse button
+        self.browse_button = tk.Button(root, text="Browse", command=self.browse_folder)
+        self.browse_button.pack(pady=10)
+
+        # Label for displaying selected DICOM file path
+        self.file_label = tk.Label(root, textvariable=self.dicom_file_path)
+        self.file_label.pack(pady=10)
+
+        # Display image button
+        self.display_button = tk.Button(root, text="Display DICOM Image", command=self.display_dicom_image)
+        self.display_button.pack(pady=10)
+
+    def browse_folder(self):
+        folder_path = filedialog.askdirectory()
+        if folder_path:
+            dicom_files = [f for f in os.listdir(folder_path) if f.lower().endswith('.dcm')]
+            if dicom_files:
+                selected_file = filedialog.askopenfilename(initialdir=folder_path, title="Select a DICOM file",
+                                                            filetypes=(("DICOM files", "*.dcm"), ("all files", "*.*")))
+                self.dicom_file_path.set(selected_file)
+            else:
+                self.dicom_file_path.set("No DICOM files found in the selected folder.")
+
+    def display_dicom_image(self):
+        dicom_file_path = self.dicom_file_path.get()
+        if os.path.isfile(dicom_file_path):
+            dicom_data = pydicom.dcmread(dicom_file_path)
+            pixel_array = dicom_data.pixel_array
+
+            # Convert pixel array to Pillow Image
+            image = Image.fromarray(pixel_array)
+
+            # Display the image in the GUI
+            tk_image = ImageTk.PhotoImage(image)
+            self.image_label.config(image=tk_image)
+            self.image_label.image = tk_image
+            self.image_label.pack(pady=10)
+        else:
+            self.dicom_file_path.set("Invalid or no DICOM file selected.")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = DICOMViewerApp(root)
+    root.mainloop()
+
+
+
+
+
+
+
+"""
+
 import os
 import keyboard
 
@@ -40,3 +109,4 @@ while True:
     except keyboard.KeyboardInterrupt:
         print("\nExiting.")
         break
+    """
