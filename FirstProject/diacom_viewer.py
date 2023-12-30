@@ -25,25 +25,54 @@ class DICOMViewerApp:
         # Browse button
         self.browse_button = tk.Button(root, text="Browse", command=self.browse_folder)
         self.browse_button.pack(pady=10)
+        
+        self.folder_path = tk.StringVar()
+        self.folder_path.set("/Users/milan/Documents/GitHub/Kaggle/MRIScan-Spine/RSNA/data")
+
+        # Label for displaying selected folder path
+        self.folder_label = tk.Label(root, textvariable=self.folder_path, justify="center", wraplength=300)
+        self.folder_label.pack(pady=10)
+
 
         # Label for displaying selected DICOM file path
-        self.file_label = tk.Label(root, textvariable=self.dicom_file_path)
+        self.file_label = tk.Label(root, textvariable=self.dicom_file_path, justify="center", wraplength=300)
         self.file_label.pack(pady=10)
 
         # Display image button
-        self.display_button = tk.Button(root, text="Display DICOM Image", command=self.display_dicom_image)
+        self.display_button = tk.Button(root, text="Display DICOM Image", command=self.display_next_dicom_image)
         self.display_button.pack(pady=10)
+        
+        self.file_index = 0
 
     def browse_folder(self):
-        folder_path = filedialog.askdirectory()
-        if folder_path:
-            dicom_files = [f for f in os.listdir(folder_path) if f.lower().endswith('.dcm')]
+        self.file_index = 0
+        selected_folder_path = filedialog.askdirectory(
+            initialdir=self.folder_path.get(),
+            title="Select a Directory", 
+            mustexist=True)
+        self.folder_path.set(selected_folder_path)
+        if self.folder_path:
+            dicom_files = [f for f in os.listdir(self.folder_path.get()) if f.lower().endswith('.dcm')]
             if dicom_files:
-                selected_file = filedialog.askopenfilename(initialdir=folder_path, title="Select a DICOM file",
-                                                            filetypes=(("DICOM files", "*.dcm"), ("all files", "*.*")))
+                selected_file = self.folder_path.get() + "/" + dicom_files[self.file_index]
+#                selected_file = filedialog.askopenfilename(initialdir=self.folder_path, title="Select a DICOM file",
+#                                                            filetypes=(("DICOM files", "*.dcm"), ("all files", "*.*")))
                 self.dicom_file_path.set(selected_file)
+                self.display_dicom_image()
             else:
                 self.dicom_file_path.set("No DICOM files found in the selected folder.")
+
+    def display_next_dicom_image(self):
+        self.file_index += 1
+        dicom_files = [f for f in os.listdir(self.folder_path.get()) if f.lower().endswith('.dcm')]
+        
+        if self.file_index > len(dicom_files):
+            self.file_index = 0
+            
+        selected_file = self.folder_path.get() + "/" + dicom_files[self.file_index]
+        self.dicom_file_path.set(selected_file)
+        self.display_dicom_image()
+              
 
     def display_dicom_image(self):
         dicom_file_path = self.dicom_file_path.get()
@@ -62,9 +91,29 @@ class DICOMViewerApp:
         else:
             self.dicom_file_path.set("Invalid or no DICOM file selected.")
 
+
+def center_window(window, width, height):
+    screen_width = window.winfo_screenwidth()
+    screen_height = window.winfo_screenheight()
+
+    x_coordinate = (screen_width - width) // 2
+    y_coordinate = (screen_height - height) // 2
+
+    window.geometry(f"{width}x{height}+{x_coordinate}+{y_coordinate}")
+
+
 if __name__ == "__main__":
     root = tk.Tk()
     app = DICOMViewerApp(root)
+
+    # Set the size of the window (width x height)
+    window_width = 400
+    window_height = 300
+    root.geometry(f"{window_width}x{window_height}")
+    
+    # Center the window on the screen
+    center_window(root, window_width, window_height)
+
     root.mainloop()
 
 
