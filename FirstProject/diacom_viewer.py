@@ -39,7 +39,7 @@ class DICOMViewerApp:
         self.file_label.pack(pady=10)
 
         # Display image button
-        self.display_button = tk.Button(root, text="Display DICOM Image", command=self.display_next_dicom_image)
+        self.display_button = tk.Button(root, text="Next Image", command=self.display_next_dicom_image)
         self.display_button.pack(pady=10)
         
         self.file_index = 0
