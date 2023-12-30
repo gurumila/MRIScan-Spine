@@ -30,13 +30,17 @@ class DICOMViewerApp:
         self.folder_path.set("/Users/milan/Documents/GitHub/Kaggle/MRIScan-Spine/RSNA/data")
 
         # Label for displaying selected folder path
-        self.folder_label = tk.Label(root, textvariable=self.folder_path, justify="center", wraplength=300)
+        self.folder_label = tk.Label(root, textvariable=self.folder_path, justify="center", wraplength=500)
         self.folder_label.pack(pady=10)
 
 
         # Label for displaying selected DICOM file path
-        self.file_label = tk.Label(root, textvariable=self.dicom_file_path, justify="center", wraplength=300)
+        self.file_label = tk.Label(root, textvariable=self.dicom_file_path, justify="center", wraplength=500)
         self.file_label.pack(pady=10)
+
+        # Display image button
+        self.display_previous_button = tk.Button(root, text="Previous Image", command=self.display_previous_dicom_image)
+        self.display_previous_button.pack(pady=10)
 
         # Display image button
         self.display_button = tk.Button(root, text="Next Image", command=self.display_next_dicom_image)
@@ -70,12 +74,21 @@ class DICOMViewerApp:
         if self.file_index > len(self.dicom_files):
             self.file_index = 0
             
-        selected_file = self.folder_path.get() + "/" + self.dicom_files[self.file_index]
-        self.dicom_file_path.set(selected_file)
+        self.display_dicom_image()
+              
+    def display_previous_dicom_image(self):
+        self.file_index -= 1
+        
+        if self.file_index < 0:
+            self.file_index = len(self.dicom_files) - 1
+            
         self.display_dicom_image()
               
 
     def display_dicom_image(self):
+        selected_file = self.folder_path.get() + "/" + self.dicom_files[self.file_index]
+        self.dicom_file_path.set(selected_file)
+
         dicom_file_path = self.dicom_file_path.get()
         if os.path.isfile(dicom_file_path):
             dicom_data = pydicom.dcmread(dicom_file_path)
@@ -108,8 +121,8 @@ if __name__ == "__main__":
     app = DICOMViewerApp(root)
 
     # Set the size of the window (width x height)
-    window_width = 400
-    window_height = 300
+    window_width = 550
+    window_height = 750
     root.geometry(f"{window_width}x{window_height}")
     
     # Center the window on the screen
