@@ -43,6 +43,7 @@ class DICOMViewerApp:
         self.display_button.pack(pady=10)
         
         self.file_index = 0
+        self.dicom_files = []
 
     def browse_folder(self):
         self.file_index = 0
@@ -52,9 +53,10 @@ class DICOMViewerApp:
             mustexist=True)
         self.folder_path.set(selected_folder_path)
         if self.folder_path:
-            dicom_files = [f for f in os.listdir(self.folder_path.get()) if f.lower().endswith('.dcm')]
-            if dicom_files:
-                selected_file = self.folder_path.get() + "/" + dicom_files[self.file_index]
+            self.dicom_files = [f for f in os.listdir(self.folder_path.get()) if f.lower().endswith('.dcm')]
+            if self.dicom_files:
+                self.dicom_files.sort(key=lambda x: int(x.split(".")[0]))
+                selected_file = self.folder_path.get() + "/" + self.dicom_files[self.file_index]
 #                selected_file = filedialog.askopenfilename(initialdir=self.folder_path, title="Select a DICOM file",
 #                                                            filetypes=(("DICOM files", "*.dcm"), ("all files", "*.*")))
                 self.dicom_file_path.set(selected_file)
@@ -64,12 +66,11 @@ class DICOMViewerApp:
 
     def display_next_dicom_image(self):
         self.file_index += 1
-        dicom_files = [f for f in os.listdir(self.folder_path.get()) if f.lower().endswith('.dcm')]
         
-        if self.file_index > len(dicom_files):
+        if self.file_index > len(self.dicom_files):
             self.file_index = 0
             
-        selected_file = self.folder_path.get() + "/" + dicom_files[self.file_index]
+        selected_file = self.folder_path.get() + "/" + self.dicom_files[self.file_index]
         self.dicom_file_path.set(selected_file)
         self.display_dicom_image()
               
