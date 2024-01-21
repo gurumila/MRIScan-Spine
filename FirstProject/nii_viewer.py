@@ -25,6 +25,12 @@ class NiiViewerApp:
         # Browse button
         self.browse_button = tk.Button(root, text="Load File", command=self.browse_folder)
         self.browse_button.pack(pady=10)
+
+        # Label for displaying selected DICOM file path
+        self.file_label = tk.Label(root, textvariable=self.nii_file_path, justify="center", wraplength=500)
+        self.file_label.pack(pady=10)
+        
+        self.nii_file_path.set("No files slected...")
         
         self.folder_path = tk.StringVar()
         self.folder_path.set("/Users/milan/Documents/GitHub/Kaggle/MRIScan-Spine/RSNA/data/segmentations")
@@ -34,21 +40,21 @@ class NiiViewerApp:
 
         # Label for displaying Messages
         self.message_label = tk.Label(root, textvariable=self.message, justify="center", wraplength=500)
-        self.message_label.pack(pady=10)
+        #self.message_label.pack(pady=10)
 
-
-        # Label for displaying selected DICOM file path
-        self.file_label = tk.Label(root, textvariable=self.nii_file_path, justify="center", wraplength=500)
-        self.file_label.pack(pady=10)
+        self.image_label.pack(pady=10)
 
         # Display image button
         self.display_previous_button = tk.Button(root, text="Previous Section", command=self.display_previous_slice)
-        self.display_previous_button.pack(pady=10)
+        #self.display_previous_button.pack(pady=10)
+        self.display_previous_button.pack(side="left")
 
+        self.message_label.pack(pady=10)
         # Display image button
-        self.display_button = tk.Button(root, text="Next Section", command=self.display_next_slice)
-        self.display_button.pack(pady=10)
-        
+        self.display_next_button = tk.Button(root, text="Next Section", command=self.display_next_slice)
+        #self.display_next_button.pack(pady=10)
+        self.display_next_button.pack(side="right")
+
         self.slice_index = 0
         self.slice_count = 0
 
@@ -65,12 +71,14 @@ class NiiViewerApp:
             self.message.set(selected_file_path)
             # Load NIfTI file
             self.nii_image = nib.load(self.nii_file_path.get())
+            
+            print(self.nii_image)
 
             # Get the data array from the image
             self.nii_image_data = self.nii_image.get_fdata()
 
-            self.slice_count = 50
-            self.slice_index = 10
+            self.slice_count = self.nii_image_data.shape[2] if len(self.nii_image_data.shape) == 3 else 1
+            self.slice_index = 0
 
             self.display_nii_image_slice()
         else:
@@ -110,11 +118,12 @@ class NiiViewerApp:
         tk_image = ImageTk.PhotoImage(image)
         
         if tk_image:
-            message = f"TK Image created for section: {self.slice_index}"
+            message = f"Loading section: {self.slice_index}"
             self.message.set(message)
             
         self.image_label.config(image=tk_image)
         self.image_label.image = tk_image
+
         self.image_label.pack(pady=10)
         
         """
