@@ -38,20 +38,21 @@ class NiiViewerApp:
         self.message = tk.StringVar()
         self.message.set("/Users/milan/Documents/GitHub/Kaggle/MRIScan-Spine/RSNA/data/segmentations")
 
-        # Label for displaying Messages
-        self.message_label = tk.Label(root, textvariable=self.message, justify="center", wraplength=500)
-        #self.message_label.pack(pady=10)
-
+        # Set Image Label
         self.image_label.pack(pady=10)
 
-        # Display image button
+        # Label for displaying Messages
+        self.message_label = tk.Label(root, textvariable=self.message, justify="center", wraplength=500)
+        self.message_label.pack(pady=10)
+
+        # Display prev image button
         self.display_previous_button = tk.Button(root, text="Previous Section", command=self.display_previous_slice)
         #self.display_previous_button.pack(pady=10)
         self.display_previous_button.pack(side="left")
 
-        self.message_label.pack(pady=10)
-        # Display image button
+        # Display nex image button
         self.display_next_button = tk.Button(root, text="Next Section", command=self.display_next_slice)
+        self.display_next_button.configure(highlightcolor="blue")
         #self.display_next_button.pack(pady=10)
         self.display_next_button.pack(side="right")
 
@@ -81,8 +82,10 @@ class NiiViewerApp:
             self.slice_index = 0
 
             self.display_nii_image_slice()
+            self.message_label.configure(foreground="white")
         else:
             self.message.set("No file slected")
+            self.message_label.configure(foreground="red")
 
     def display_next_slice(self):
         self.slice_index += 1
@@ -121,7 +124,7 @@ class NiiViewerApp:
             message = f"Loading section: {self.slice_index}"
             self.message.set(message)
             
-        self.image_label.config(image=tk_image)
+        self.image_label.config(image=tk_image, background="white")
         self.image_label.image = tk_image
 
         self.image_label.pack(pady=10)
