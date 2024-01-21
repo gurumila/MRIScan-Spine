@@ -129,25 +129,6 @@ class NiiViewerApp:
 
         self.image_label.pack(pady=10)
         
-        """
-        self.nii_file_path.set(selected_file)
-
-        nii_file_path = self.nii_file_path.get()
-        if os.path.isfile(nii_file_path):
-            dicom_data = pydicom.dcmread(nii_file_path)
-            pixel_array = dicom_data.pixel_array
-
-            # Convert pixel array to Pillow Image
-            image = Image.fromarray(pixel_array)
-
-            # Display the image in the GUI
-            tk_image = ImageTk.PhotoImage(image)
-            self.image_label.config(image=tk_image)
-            self.image_label.image = tk_image
-            self.image_label.pack(pady=10)
-        else:
-            self.nii_file_path.set("Invalid or no DICOM file selected.")
-            """
 
     def read_nifti_data(file_path):
         try:
